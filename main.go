@@ -1,6 +1,7 @@
 package main
 
 import (
+	"SRUN_LOGIN/jsVM"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -11,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"SRUN_LOGIN/jsVM"
 	"strconv"
 	"strings"
 	"time"
@@ -55,7 +55,7 @@ func getChallenge(uname, ip string) (challenge string, err error) {
 	}
 	defer resp.Body.Close()
 	if m["res"].(string) != "ok" {
-		return "", errors.New("get_challenge: res不ok")
+		return "", errors.New("get_challenge: res不ok - " + m["error"].(string))
 	}
 	return m["challenge"].(string), nil
 }
@@ -109,7 +109,7 @@ func genParams(cha, uname, passwd, acid, ip string) (password, chksum, info stri
 }
 
 func getViewParam() (acid, ip string, err error) {
-	resp, err := http.Get("http://" + host)
+	resp, err := http.Get(fmt.Sprintf("http://%v/srun_portal_pc?ac_id=1&theme=basic2", host))
 	if err != nil {
 		return
 	}
@@ -156,7 +156,7 @@ func login(uname, passwd string) (sucMessage string, err error) {
 	}
 	defer resp.Body.Close()
 	if m["res"] != "ok" {
-		return "", errors.New("登录失败" + m["error_msg"].(string))
+		return "", errors.New("登录失败" + m["error_msg"].(string) + m["error"].(string))
 	}
 	return m["suc_msg"].(string), nil
 }
@@ -166,7 +166,12 @@ func main() {
 	if len(host) <= 0 {
 		host = "10.248.98.2"
 	}
-	sucMessage, err := login(os.Getenv("SRUN_UNAME"), os.Getenv("SRUN_PASSWD"))
+	uname := os.Getenv("SRUN_UNAME")
+	passwd := os.Getenv("SRUN_PASSWD")
+	if len(uname) <= 0 || len(passwd) <= 0 {
+		log.Fatal("账密输了吗？")
+	}
+	sucMessage, err := login(uname, passwd)
 	if err != nil {
 		log.Fatal(err)
 	}
