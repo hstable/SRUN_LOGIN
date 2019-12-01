@@ -19,6 +19,19 @@ import (
 
 var host string
 
+func httpGet(url string) (resp *http.Response, err error) {
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set("User-Agent", `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.70 Safari/537.36`)
+	req.Header.Set("Accept", `*/*`)
+	req.Header.Set("Host", host)
+	req.Header.Set("Connection", "keep-alive")
+	req.Header.Set("X-Requested-With", "XMLHttpRequest")
+	req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Accept-Language", "en,zh-CN;q=0.9,zh;q=0.8,pl;q=0.7")
+	fmt.Println(req.Header)
+	return http.DefaultClient.Do(req)
+}
+
 func timestamp() string {
 	return strconv.Itoa(int(time.Now().UnixNano() / 1e6))
 }
@@ -40,7 +53,7 @@ func hereyouare(body io.ReadCloser) (m map[string]interface{}, err error) {
 	return
 }
 func getChallenge(uname, ip string) (challenge string, err error) {
-	resp, err := http.Get(fmt.Sprintf("http://%v/cgi-bin/get_challenge?callback=hereyouare&username=%v&ip=%v&_=%v",
+	resp, err := httpGet(fmt.Sprintf("http://%v/cgi-bin/get_challenge?callback=hereyouare&username=%v&ip=%v&_=%v",
 		host,
 		uname,
 		ip,
@@ -109,7 +122,7 @@ func genParams(cha, uname, passwd, acid, ip string) (password, chksum, info stri
 }
 
 func getViewParam() (acid, ip string, err error) {
-	resp, err := http.Get(fmt.Sprintf("http://%v/srun_portal_pc?ac_id=1&theme=basic2", host))
+	resp, err := httpGet(fmt.Sprintf("http://%v", host))
 	if err != nil {
 		return
 	}
@@ -146,7 +159,7 @@ func login(uname, passwd string) (sucMessage string, err error) {
 		url.QueryEscape(info),
 		timestamp(),
 	)
-	resp, err := http.Get(u)
+	resp, err := httpGet(u)
 	if err != nil {
 		return
 	}
