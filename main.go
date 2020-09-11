@@ -189,4 +189,15 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Println(sucMessage)
+	if keepAlive := os.Getenv("SRUN_KEEP_ALIVE"); keepAlive == "1" || strings.EqualFold(keepAlive, "true") {
+		c := http.Client{Timeout: 5 * time.Second}
+		// 每180秒一个心跳http包
+		tick := time.Tick(180 * time.Second)
+		for range tick {
+			resp, err := c.Get("http://www.msftconnecttest.com/connecttest.txt")
+			if err == nil {
+				_ = resp.Body.Close()
+			}
+		}
+	}
 }
