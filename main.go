@@ -182,6 +182,10 @@ func main() {
 	uname := os.Getenv("SRUN_UNAME")
 	passwd := os.Getenv("SRUN_PASSWD")
 	if len(uname) <= 0 || len(passwd) <= 0 {
+		uname = os.Args[1]
+		passwd = os.Args[2]
+	}
+	if len(uname) <= 0 || len(passwd) <= 0 {
 		log.Fatal("账密输了吗？")
 	}
 	sucMessage, err := login(uname, passwd)
