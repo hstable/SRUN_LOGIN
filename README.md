@@ -14,18 +14,20 @@
 
 `SRUN_KEEP_ALIVE`: 设为1或true则每隔180秒发送一次请求以保持在线，可以与nohup一起使用
 
-### Binary
+### 二进制文件
 
-Download from [releases](https://github.com/hstable/SRUN_LOGIN/releases).
+1. 从 [releases](https://github.com/hstable/SRUN_LOGIN/releases) 下载二进制文件。
 
-```shell script
-./SRUN_LOGIN yourusername yourpassword
-```
+2. 使用示例：
 
-More parameters:
-```shell script
-SRUN_KEEP_ALIVE=1 SRUN_HOST=10.248.98.2 ./SRUN_LOGIN yourusername yourpassword
-```
+   ```shell script
+   ./SRUN_LOGIN yourusername yourpassword
+   ```
+
+   更多参数:
+   ```shell script
+   SRUN_KEEP_ALIVE=1 SRUN_HOST=10.248.98.2 ./SRUN_LOGIN yourusername yourpassword
+   ```
 
 ### Docker
 
