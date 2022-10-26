@@ -18,7 +18,13 @@
 
 1. 从 [releases](https://github.com/hstable/SRUN_LOGIN/releases) 下载二进制文件。
 
-2. 使用示例：
+2. 赋予可执行权限：
+
+   ```shell script
+   chmod +x ./SRUN_LOGIN
+   ```
+
+3. 使用示例：
 
    ```shell script
    ./SRUN_LOGIN yourusername yourpassword
